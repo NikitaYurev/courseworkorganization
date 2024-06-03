@@ -1,0 +1,155 @@
+.container-fluid {
+    width: 100%; 
+    max-width: 1200px;
+    margin: auto; 
+    padding: 0 15px; 
+}
+
+.row {
+    display: flex;
+    flex-direction: column; 
+    width: 100%; 
+    margin-bottom: 20px; 
+}
+
+.quote-container, .stat-item {
+    margin: 10px 0; 
+}
+
+.stats-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; 
+}
+
+.stat-item {
+    flex: 1;
+    text-align: center; 
+    padding: 10px;
+}
+
+.gradient-text {
+    font-size: 2rem;
+    background: -webkit-linear-gradient(45deg, #ff6b6b, #f94d6d, #ff0000);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: center; /* Ensures the text is centered */
+    margin: 20px 0; /* Top and bottom margin for spacing */
+}
+
+
+.quote {
+    font-style: italic;
+    text-align: center;
+}
+
+.author {
+    font-weight: bold;
+    text-align: center;
+}
+
+.collapsible {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.collapsible button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.collapsible button img {
+    width: 30px;
+    height: 30px;
+}
+
+.content {
+    width: 100%;
+    overflow: hidden;
+}
+
+.text-container {
+    display: flex;
+    flex-wrap: nowrap;
+    transition: transform 0.5s ease;
+    width: 100%;
+}
+
+.slide {
+    flex: 0 0 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    visibility: visible;
+    transition: opacity 0.5s linear;
+}
+
+.slide:not(.active) {
+    visibility: hidden;
+    opacity: 0;
+    display: none;
+}
+
+.bold-text {
+    font-weight: bold; /* Makes the text bold */
+    color: #343a40; /* Sets the text color, adjust as needed */
+}
+
+
+/*Rating-system*/
+
+.rating-system {
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.stars {
+    font-size: 30px;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.stars .star {
+    margin-right: 5px;
+    transition: color 0.3s;
+}
+
+.stars .star:hover,
+.stars .star.orange {
+    color: #f80;
+}
+
+.message-textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: none; /* Prevent resizing */
+}
+
+.submit-btn {
+    background-color: #007bff; /* Bootsrap primary blue */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+}
+
+.submit-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+.rating-label, .message-textarea {
+    display: block; /* Ensures full width usage */
+    margin-bottom: 10px; /* Spacing between elements */
+    text-align: center;
+}

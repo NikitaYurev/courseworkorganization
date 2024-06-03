@@ -1,0 +1,13 @@
+.container-fluid {
+    padding-top: 20px;
+}
+
+.rounded-box {
+    border-radius: 15px;
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+.search-button {
+    background-color:#ffffff;
+}
