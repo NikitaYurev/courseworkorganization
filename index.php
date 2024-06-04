@@ -222,9 +222,6 @@ createReviewsTable($conn);
                         </div>
                         <form id="rating-form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                             <div class="row">
-                                <label for="user-rating" class="rating-label">Your Rating:</label>
-                            </div>
-                            <div class="row">
                                 <div class="rating-system">
                                     <div class="stars">
                                         <span class="star" data-value="1">★</span>
@@ -235,13 +232,10 @@ createReviewsTable($conn);
                                     </div>
                                     <input type="hidden" id="user-rating" name="user-rating" value="0">
                                 </div>
-                            </div>
-                            <div class="row">
-                                <label for="user-message">Your Message:</label>
                                 <textarea id="user-message" name="user-message" class="message-textarea"></textarea>
                             </div>
                             <div class="row">
-                                <button type="submit" name="submit" class="submit-btn">Submit</button>
+                                <button type="submit" name="submit" class="submit-btn-rarting">Submit</button>
                             </div>
                         </form>
                     </div>

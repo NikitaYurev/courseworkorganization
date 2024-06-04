@@ -104,20 +104,34 @@
 /*Rating-system*/
 
 .rating-system {
-    padding: 10px;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
     background-color: #f9f9f9;
     border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    width: fit-content;
 }
 
 .stars {
     font-size: 30px;
     color: #ccc;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0 auto 20px;
 }
 
 .stars .star {
-    margin-right: 5px;
+    display: inline-block;
+    /* margin-right: 5px; */
     transition: color 0.3s;
+}
+
+.stars .star:last-child {
+    margin-right: 0;
 }
 
 .stars .star:hover,
@@ -127,24 +141,31 @@
 
 .message-textarea {
     width: 100%;
-    padding: 8px;
+    /* padding: 10px; */
+    border-radius: 5px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    resize: none;
     resize: none; /* Prevent resizing */
+    display: block;
+    margin: 0 auto 20px /* Center alignment and margin */
 }
 
-.submit-btn {
+/* Button visibility and styling */
+.submit-btn-rating {
     background-color: #007bff; /* Bootsrap primary blue */
-    color: white;
+    color: #007bff;
     border: none;
-    padding: 10px 15px;
+    /* padding: 10px 20px; */
+    font-size: 16px;
     border-radius: 5px;
     cursor: pointer;
+    display: block;
+    margin: 0 auto;
     transition: background-color 0.3s;
 
 }
 
-.submit-btn:hover {
+.submit-btn-rating:hover {
     background-color: #0056b3; /* Darker blue on hover */
 }
 
