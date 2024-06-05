@@ -129,6 +129,7 @@ createReviewsTable($conn);
     <link rel="stylesheet" href="./styles/index/quote.css">
     <link rel="stylesheet" href="./styles/index/programming-text.css">
     <link rel="stylesheet" href="./styles/index/modal.css">
+    <link rel="stylesheet" href="./styles/index/satisfied-users.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <title>Landing Page</title>
@@ -308,6 +309,7 @@ createReviewsTable($conn);
     <script src="./js/index/since.js"></script>
     <script src="./js/index/rating-system.js"></script>
     <script src="./js/index/post.js"></script>
+    <script src="./js/index/satisfied-users.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

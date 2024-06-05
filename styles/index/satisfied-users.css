@@ -1,0 +1,23 @@
+.review-box {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #f9f9f9;
+    width: 80%; /* Adjust as necessary */
+    margin: auto; /* Center align */
+    display: none; /* Hide all reviews initially */
+}
+
+.review-box:first-child {
+    display: block; /* Show the first review */
+}
+
+.user-name {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.review-content {
+    font-style: italic;
+}
