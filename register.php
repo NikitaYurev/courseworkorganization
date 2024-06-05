@@ -26,14 +26,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare($insertQuery);
         $stmt->bind_param('ssss', $username, $email, $password, $role);
         if ($stmt->execute()) {
-            $message = "Registration successful!";
-            $message_type = 'success';
+            $_SESSION['message'] = "Registration successful!"; // Assuming session_start() has been called
+            $_SESSION['message_type'] = 'success';
+            header('Location: index.php'); // Redirect to the home page or login page
+            exit;
         } else {
             $message = "Registration failed!";
             $message_type = 'danger';
         }
     }
+    $conn->close();
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -54,36 +58,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/index.php' ? 'active' : '') ?>" href="index.php">Home</a>
+                        <a class="nav-link" href="index.php">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/about.php' ? 'active' : '') ?>" href="about.php">About</a>
+                        <a class="nav-link" href="about.php">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/contact.php' ? 'active' : '') ?>" href="contact.php">Contact</a>
+                        <a class="nav-link" href="contact.php">Contact</a>
                     </li>
-                    <?php if(isset($_SESSION['user_id']) && $_SESSION['role'] == 'admin'): ?>
-                        <li class="nav-item">
-                            <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/administration_page.php' ? 'active' : '') ?>" href="administration_page.php">Administration</a>
-                        </li>
-                    <?php endif; ?>
                 </ul>
                 <ul class="navbar-nav ml-auto">
-                    <?php if(isset($_SESSION['user_id'])): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Logged in as <?= htmlspecialchars($_SESSION['username']) ?></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="logout.php">Logout</a>
-                        </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="login.php">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/register.php' ? 'active' : '') ?>" href="register.php">Register</a>
-                        </li>
-                    <?php endif; ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.php">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="register.php">Register</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -114,6 +104,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
