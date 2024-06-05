@@ -128,6 +128,8 @@ createReviewsTable($conn);
     <link rel="stylesheet" href="./styles/index/index.css">
     <link rel="stylesheet" href="./styles/index/quote.css">
     <link rel="stylesheet" href="./styles/index/programming-text.css">
+    <link rel="stylesheet" href="./styles/index/modal.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <title>Landing Page</title>
 </head>
@@ -216,11 +218,21 @@ createReviewsTable($conn);
                             </div>
                         </div>
                     </div>
+                    
                     <div class="slide">
+                        <div class="row">
+                            <!-- Universal message display block -->
+                            <?php if (!empty($_SESSION['message'])): ?> 
+                                <div class="alert alert-<?php echo $_SESSION['alert_type']?>" role="allert">
+                                    <?php echo $_SESSION['message']; ?>
+                                </div>
+                                <?php unset($_SESSION['message'], $_SESSION['alert_type']); // clear the message after displaying ?>
+                            <?php endif; ?>
+                        </div>
                         <div class="row">
                             <span class="gradient-text">Rate Us</span>
                         </div>
-                        <form id="rating-form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                        <form id="rating-form">
                             <div class="row">
                                 <div class="rating-system">
                                     <div class="stars">
@@ -235,7 +247,7 @@ createReviewsTable($conn);
                                 <textarea id="user-message" name="user-message" class="message-textarea"></textarea>
                             </div>
                             <div class="row">
-                                <button type="submit" name="submit" class="submit-btn-rarting">Submit</button>
+                                <button type="submit" name="submit" class="submit-btn-rating">Submit</button>
                             </div>
                         </form>
                     </div>
@@ -246,12 +258,56 @@ createReviewsTable($conn);
     </section>
 
 
+    <!-- Custom Message Modal -->
+    <div id="messageModal" class="custom-modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <div class="modal-body" id="messageContent">
+                <!-- Message will be injected here -->
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var modal = document.getElementById('messageModal');
+            var closeButton = document.querySelector('.close-button');
+
+            <?php if (!empty($_SESSION['message'])): ?>
+                var messageType = "<?php echo $_SESSION['alert_type']; ?>";
+                var message = "<?php echo addslashes($_SESSION['message']); ?>";
+                var messageContent = document.getElementById('messageContent');
+                messageContent.innerHTML = message;
+
+                // Set modal body background color based on message type
+                if (messageType === 'success') {
+                    messageContent.style.backgroundColor = '#ccffcc'; // light lime green
+                } else if (messageType === 'danger') {
+                    messageContent.style.backgroundColor = '#ffcccc'; // light pink
+                }
+
+                // Show the modal
+                modal.style.display = 'block';
+
+                <?php unset($_SESSION['message'], $_SESSION['alert_type']); ?>
+            <?php endif; ?>
+
+            closeButton.onclick = function() {
+                modal.style.display = 'none';
+            }
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        });
+    </script>
 
 
     <script src="./js/index/collapsible.js"></script>
     <script src="./js/index/since.js"></script>
     <script src="./js/index/rating-system.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="./js/index/post.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

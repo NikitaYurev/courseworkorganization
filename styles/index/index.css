@@ -152,17 +152,17 @@
 
 /* Button visibility and styling */
 .submit-btn-rating {
-    background-color: #007bff; /* Bootsrap primary blue */
-    color: #007bff;
+    background-color: #007bff; /* Bootstrap primary blue */
+    color: white;
     border: none;
-    /* padding: 10px 20px; */
+    padding: 10px 20px;
     font-size: 16px;
     border-radius: 5px;
     cursor: pointer;
     display: block;
-    margin: 0 auto;
-    transition: background-color 0.3s;
-
+    margin: 20px auto; /* Ensure the button is centered */
+    width: auto; /* Adjust width as necessary */
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
 }
 
 .submit-btn-rating:hover {
