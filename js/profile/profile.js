@@ -1,7 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
     let stars = document.querySelectorAll(".star");
+    let reviewForm = document.getElementById("review-form");
+    let existingRating = parseInt(reviewForm.getAttribute("data-rating"));
 
-    // Function to update star ratings
+    // Initialize the stars based on the existing rating
+    updateStars(existingRating);
+
     stars.forEach(star => {
         star.addEventListener("click", function() {
             let index = this.getAttribute('data-value');
@@ -13,20 +17,6 @@ document.addEventListener("DOMContentLoaded", function() {
         stars.forEach((star, index) => {
             star.classList.toggle('active', index < selectedIndex);
         });
-        document.getElementById("review-form").setAttribute("data-rating", selectedIndex);
+        reviewForm.setAttribute("data-rating", selectedIndex);
     }
-
-    // Modal functionality
-    var closeButton = document.querySelector('.close-button');
-    var modal = document.getElementById('messageModal');
-
-    closeButton.onclick = function() {
-        modal.style.display = 'none';
-    };
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-    };
 });

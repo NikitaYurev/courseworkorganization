@@ -141,7 +141,7 @@ $button_text = $existing_review ? "Update Review" : "Post Review";
         <h2>Leave a Review</h2>
         <form id="review-form" data-update="<?= !empty($existing_review) ? '1' : '0'?>">
             <input type="hidden" id="is_update" name="is_update" value="<?= !empty($existing_review) ? '1' : '0'?>">
-            <div class="rating-system">
+            <div class="rating-system" data-rating="<?= $existing_rating ?>">
                 <span class="star" data-value="1">★</span>
                 <span class="star" data-value="2">★</span>
                 <span class="star" data-value="3">★</span>

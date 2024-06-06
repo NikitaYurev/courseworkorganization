@@ -4,10 +4,10 @@ header('Content-Type: application/json');
 
 include 'db_connect.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['user_id'], $_POST['user-rating'], $_POST['user-message'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['user_id'], $_POST['user-rating'], $_POST['review-text'])) {
     $user_id = $_SESSION['user_id'];
     $rating = (int)$_POST['user-rating'];
-    $comment = mysqli_real_escape_string($conn, $_POST['user-message']);
+    $comment = mysqli_real_escape_string($conn, $_POST['review-text']);
 
     $check_review_query = "SELECT * FROM reviews WHERE user_id = ?";
     $stmt = $conn->prepare($check_review_query);
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['user_id'], $_POST['
         }
     }
 } else {
-    echo json_encode(['message' => "User is not logged in, please log in to submit a review", 'alertType' => "danger"]);
+    echo json_encode(['message' => "Invalid request or missing data", 'alertType' => "danger"]);
 }
 
 $conn->close();

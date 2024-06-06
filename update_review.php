@@ -4,10 +4,10 @@ header('Content-Type: application/json');
 
 include 'db_connect.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['user_id'], $_POST['user-rating'], $_POST['user-message'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['user_id'], $_POST['user-rating'], $_POST['review-text'])) {
     $user_id = $_SESSION['user_id'];
     $rating = (int)$_POST['user-rating'];
-    $comment = mysqli_real_escape_string($conn, $_POST['user-message']);
+    $comment = mysqli_real_escape_string($conn, $_POST['review-text']);
 
     $update_query = "UPDATE reviews SET rating = ?, comment = ? WHERE user_id = ?";
     $stmt = $conn->prepare($update_query);

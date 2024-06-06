@@ -1,9 +1,7 @@
 $(document).ready(function() {
     $('#review-form').on('submit', function(event) {
         event.preventDefault();
-        var rating = document.getElementById('review-form').getAttribute('data-rating');
-        var formData = $(this).serialize() + '&user-rating=' + rating;
-
+        var formData = $(this).serialize() + '&user-rating=' + $('#review-form').data('rating');
         var isUpdate = $('#is_update').val() === '1' ? 'update_review.php' : 'save_review.php';
 
         $.ajax({
@@ -12,25 +10,23 @@ $(document).ready(function() {
             data: formData,
             dataType: "json",
             success: function(response) {
-                $('#messageContent').html(response.message);
-                $('#messageContent').addClass(response.alertType === 'success' ? 'success' : 'danger');
-                $('#messageModal').show(); // Show the modal
+                $('#messageContent').html(response.message).removeClass('success danger').addClass(response.alertType);
+                $('#messageModal').css('display', 'flex');
             },
             error: function(xhr, status, error) {
-                $('#messageContent').html("Error: " + error);
-                $('#messageContent').addClass('danger');
-                $('#messageModal').show(); // Show the modal
+                $('#messageContent').html("Error: " + error).removeClass('success').addClass('danger');
+                $('#messageModal').css('display', 'flex');
             }
         });
     });
 
-    $('.close-button').click(function() {
-        $('#messageModal').hide();
+    $('.close-button').on('click', function() {
+        $('#messageModal').css('display', 'none');
     });
 
-    $(window).click(function(event) {
+    $(window).on('click', function(event) {
         if ($(event.target).is('#messageModal')) {
-            $('#messageModal').hide();
+            $('#messageModal').css('display', 'none');
         }
     });
 });

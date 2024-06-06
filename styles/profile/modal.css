@@ -43,11 +43,10 @@
     margin-top: 20px;
 }
 
-/* Danger and success styles */
-.modal-body.danger {
-    background-color: #ffcccc; /* Light pink */
-}
-
 .modal-body.success {
     background-color: #ccffcc; /* Light lime green */
+}
+
+.modal-body.danger {
+    background-color: #ffcccc; /* Light pink */
 }
