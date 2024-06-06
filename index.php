@@ -157,6 +157,11 @@ createReviewsTable($conn);
                             <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/administration_page.php' ? 'active' : '') ?>" href="administration_page.php">Administration</a>
                         </li>
                     <?php endif; ?>
+                    <?php if (in_array($_SESSION['role'], ['coworker', 'owner', 'admin'])): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="workload.php">Workload</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
                 <ul class="navbar-nav ml-auto">
                     <?php if(isset($_SESSION['user_id'])): ?>

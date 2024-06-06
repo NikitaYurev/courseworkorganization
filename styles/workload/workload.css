@@ -1,0 +1,49 @@
+/* workload.css */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.container-fluid {
+    height: calc(100vh - 56px); /* Adjust height to exclude the navbar */
+}
+
+#workload-container {
+    height: 100%;
+}
+
+#projects-list, #chat-section, #workers-list {
+    padding: 0;
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-item, .worker-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 5px 15px; /* Add margin to avoid sticking to the container edges */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+}
+
+.project-item:hover, .worker-item:hover {
+    background-color: #f0f0f0;
+}
+
+.project-item img, .worker-item img {
+    margin-right: 10px;
+}
+
+.chat-box {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    margin: 5px 15px;
+    padding: 15px;
+    overflow-y: auto;
+    border-radius: 5px;
+}

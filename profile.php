@@ -48,29 +48,48 @@ $button_text = $existing_review ? "Update Review" : "Post Review";
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="index.php">Menu</a>
+            <a class="navbar-brand" href="#">Menu</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php">Home</a>
+                        <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/index.php' ? 'active' : '') ?>" href="index.php">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="about.php">About</a>
+                        <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/about.php' ? 'active' : '') ?>" href="about.php">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="contact.php">Contact</a>
+                        <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/contact.php' ? 'active' : '') ?>" href="contact.php">Contact</a>
                     </li>
+                    <?php if(isset($_SESSION['user_id']) && $_SESSION['role'] == 'admin'): ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/administration_page.php' ? 'active' : '') ?>" href="administration_page.php">Administration</a>
+                        </li>
+                    <?php endif; ?>
+                    <?php if (in_array($_SESSION['role'], ['coworker', 'owner', 'admin'])): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="workload.php">Workload</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="profile.php">Logged in as <?= htmlspecialchars($_SESSION['username']) ?></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="logout.php">Logout</a>
-                    </li>
+                    <?php if(isset($_SESSION['user_id'])): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="profile.php">Logged in as <?= htmlspecialchars($_SESSION['username']) ?></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="logout.php">Logout</a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login.php">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="register.php">Register</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>

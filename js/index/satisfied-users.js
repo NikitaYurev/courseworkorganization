@@ -12,7 +12,7 @@ $(document).ready(function() {
                 // Set up the carousel
                 var reviews = $('#satisfied-users .review-box');
                 var currentReviewIndex = 0;
-                var reviewInterval = 15000;  // 15 seconds
+                var reviewInterval = 5000;  // 5 seconds
 
                 function showNextReview() {
                     reviews.hide();  // Hide all reviews
