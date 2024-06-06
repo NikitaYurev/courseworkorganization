@@ -33,9 +33,12 @@ $projects_stmt->execute();
 $projects_result = $projects_stmt->get_result();
 $projects = $projects_result->fetch_all(MYSQLI_ASSOC);
 
-// Fetch all coworkers, admins, and owners
-$users_query = "SELECT id, username FROM users WHERE role IN ('coworker', 'admin', 'owner')";
-$users_result = $conn->query($users_query);
+// Fetch all coworkers, admins, and owners excluding the current user
+$users_query = "SELECT id, username FROM users WHERE role IN ('coworker', 'admin', 'owner') AND id != ?";
+$users_stmt = $conn->prepare($users_query);
+$users_stmt->bind_param('i', $user_id);
+$users_stmt->execute();
+$users_result = $users_stmt->get_result();
 $users = $users_result->fetch_all(MYSQLI_ASSOC);
 
 ?>
