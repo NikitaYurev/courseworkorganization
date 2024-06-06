@@ -3,20 +3,18 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    overflow: hidden; /* Prevent scrolling on the entire page */
 }
 
 .container-fluid {
     height: calc(100vh - 56px); /* Adjust height to exclude the navbar */
-}
-
-#workload-container {
-    height: 100%;
+    overflow: hidden; /* Prevent scrolling in the container */
 }
 
 #projects-list, #chat-section, #workers-list {
     padding: 0;
     height: 100%;
-    overflow-y: auto;
+    overflow-y: auto; /* Add a scrollbar if content overflows */
     display: flex;
     flex-direction: column;
 }

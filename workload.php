@@ -85,22 +85,27 @@ if (!in_array($user['role'], ['coworker', 'owner', 'admin'])) {
         </div>
     </nav>
 
-    <div class="container-fluid mt-3" id="workload-container">
-        <div class="row h-100">
-            <div class="col-md-4 d-flex flex-column" id="projects-list">
+    <div class="container-fluid">
+        <div class="row" id="workload-container">
+            <div class="col-md-3" id="projects-list">
+                <!-- List of accepted projects by team leader (chat list) -->
                 <div class="project-item">Project Name 1</div>
                 <div class="project-item">Project Name 2</div>
                 <div class="project-item">Project Name 3</div>
+                <!-- Add more projects as needed -->
             </div>
-            <div class="col-md-4 d-flex flex-column" id="chat-section">
-                <div class="chat-box flex-grow-1">
+            <div class="col-md-6" id="chat-section">
+                <!-- Chat section (initially empty) -->
+                <div class="chat-box">
                     <p>Select a project to view the chat.</p>
                 </div>
             </div>
-            <div class="col-md-4 d-flex flex-column" id="workers-list">
+            <div class="col-md-3" id="workers-list">
+                <!-- List of workers to write to (coworkers list with chats) -->
                 <div class="worker-item">Coworker Name 1</div>
                 <div class="worker-item">Coworker Name 2</div>
                 <div class="worker-item">Coworker Name 3</div>
+                <!-- Add more workers as needed -->
             </div>
         </div>
     </div>
