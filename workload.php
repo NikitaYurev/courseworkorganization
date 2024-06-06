@@ -24,6 +24,26 @@ if (!in_array($user['role'], ['coworker', 'owner', 'admin'])) {
     echo "Access denied.";
     exit;
 }
+
+// Fetch projects assigned to the user
+$projects_query = "SELECT * FROM projects WHERE team_leader_id = ?";
+$projects_stmt = $conn->prepare($projects_query);
+$projects_stmt->bind_param('i', $user_id);
+$projects_stmt->execute();
+$projects_result = $projects_stmt->get_result();
+$projects = $projects_result->fetch_all(MYSQLI_ASSOC);
+
+// Fetch coworkers for the projects
+$coworkers_query = "SELECT users.id, users.username, project_coworkers.project_id 
+                    FROM users 
+                    JOIN project_coworkers ON users.id = project_coworkers.coworker_id
+                    WHERE project_coworkers.project_id IN (SELECT id FROM projects WHERE team_leader_id = ?)";
+$coworkers_stmt = $conn->prepare($coworkers_query);
+$coworkers_stmt->bind_param('i', $user_id);
+$coworkers_stmt->execute();
+$coworkers_result = $coworkers_stmt->get_result();
+$coworkers = $coworkers_result->fetch_all(MYSQLI_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -89,10 +109,9 @@ if (!in_array($user['role'], ['coworker', 'owner', 'admin'])) {
         <div class="row" id="workload-container">
             <div class="col-md-3" id="projects-list">
                 <!-- List of accepted projects by team leader (chat list) -->
-                <div class="project-item">Project Name 1</div>
-                <div class="project-item">Project Name 2</div>
-                <div class="project-item">Project Name 3</div>
-                <!-- Add more projects as needed -->
+                <?php foreach ($projects as $project): ?>
+                    <div class="project-item" data-project-id="<?= $project['id'] ?>"><?= htmlspecialchars($project['name']) ?></div>
+                <?php endforeach; ?>
             </div>
             <div class="col-md-6" id="chat-section">
                 <!-- Chat section (initially empty) -->
@@ -102,10 +121,9 @@ if (!in_array($user['role'], ['coworker', 'owner', 'admin'])) {
             </div>
             <div class="col-md-3" id="workers-list">
                 <!-- List of workers to write to (coworkers list with chats) -->
-                <div class="worker-item">Coworker Name 1</div>
-                <div class="worker-item">Coworker Name 2</div>
-                <div class="worker-item">Coworker Name 3</div>
-                <!-- Add more workers as needed -->
+                <?php foreach ($coworkers as $coworker): ?>
+                    <div class="worker-item" data-coworker-id="<?= $coworker['id'] ?>"><?= htmlspecialchars($coworker['username']) ?></div>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>

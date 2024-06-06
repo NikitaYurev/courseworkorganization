@@ -33,6 +33,10 @@ html, body {
     background-color: #f0f0f0;
 }
 
+.project-item.selected, .worker-item.selected {
+    background-color: #d4edda;
+}
+
 .project-item img, .worker-item img {
     margin-right: 10px;
 }
@@ -44,4 +48,16 @@ html, body {
     padding: 15px;
     overflow-y: auto;
     border-radius: 5px;
+}
+
+.chat-message {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-message small {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.8em;
+    color: #999;
 }
