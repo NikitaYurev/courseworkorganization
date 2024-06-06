@@ -22,6 +22,17 @@ if (!$user) {
 
 $edit_mode = isset($_GET['edit']) && $_GET['edit'] == 'true';
 $profilePicture = $user['profile_picture'] ? $user['profile_picture'] : 'img/profile/default.jpg';
+
+// Fetch review if it exists
+$review_query = "SELECT comment, rating FROM reviews WHERE user_id = ?";
+$review_stmt = $conn->prepare($review_query);
+$review_stmt->bind_param('i', $user_id);
+$review_stmt->execute();
+$review_result = $review_stmt->get_result();
+$review = $review_result->fetch_assoc();
+$existing_review = $review ? $review['comment'] : ''; // Set an empty string if no review found
+$existing_rating = $review ? $review['rating'] : 0; // Set rating to 0 if no review found
+$button_text = $existing_review ? "Update Review" : "Post Review";
 ?>
 
 <!DOCTYPE html>
@@ -31,12 +42,13 @@ $profilePicture = $user['profile_picture'] ? $user['profile_picture'] : 'img/pro
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles/profile/profile.css">
+    <link rel="stylesheet" href="styles/profile/modal.css">
     <title>Profile</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">Menu</a>
+            <a class="navbar-brand" href="index.php">Menu</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -71,9 +83,7 @@ $profilePicture = $user['profile_picture'] ? $user['profile_picture'] : 'img/pro
                 <img src="<?= htmlspecialchars($profilePicture) ?>" alt="Profile Picture" class="img-fluid">
                 <?php if ($edit_mode): ?>
                     <form action="upload_profile_picture.php" method="POST" enctype="multipart/form-data">
-                        <!-- Hidden file input -->
                         <input type="file" name="profile_picture" id="profile_picture" style="display: none;">
-                        <!-- Visible button -->
                         <button type="button" class="btn btn-primary mt-2" onclick="document.getElementById('profile_picture').click();">Change Avatar</button>
                         <button type="submit" class="btn btn-success mt-2">Upload</button>
                     </form>
@@ -127,9 +137,38 @@ $profilePicture = $user['profile_picture'] ? $user['profile_picture'] : 'img/pro
             </div>
         </div>
     </div>
+    <div class="container mt-5">
+        <h2>Leave a Review</h2>
+        <form id="review-form" data-update="<?= !empty($existing_review) ? '1' : '0'?>">
+            <input type="hidden" id="is_update" name="is_update" value="<?= !empty($existing_review) ? '1' : '0'?>">
+            <div class="rating-system">
+                <span class="star" data-value="1">★</span>
+                <span class="star" data-value="2">★</span>
+                <span class="star" data-value="3">★</span>
+                <span class="star" data-value="4">★</span>
+                <span class="star" data-value="5">★</span>
+            </div>
+            <div class="form-group">
+                <textarea id="review-text" name="review-text" class="form-control" rows="6" placeholder="Enter your review here..."><?= htmlspecialchars($existing_review) ?></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary"><?= $button_text ?></button>
+        </form>
+    </div>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
+    <!-- Custom Message Modal -->
+    <div id="messageModal" class="custom-modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">×</span>
+            <div class="modal-body" id="messageContent">
+                <!-- Message will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="./js/profile/profile.js"></script>
+    <script src="./js/profile/ajax.js"></script>
 </body>
 </html>

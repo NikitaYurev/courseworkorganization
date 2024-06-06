@@ -20,3 +20,23 @@ textarea.form-control {
 .alert {
     margin-top: 20px;
 }
+
+.rating-system {
+    font-size: 30px;
+    color: #ccc;
+    cursor: pointer;
+    display: flex;
+    justify-content: left;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.rating-system .star {
+    display: inline-block;
+    transition: color 0.3s;
+}
+
+.rating-system .star:hover,
+.rating-system .star.active {
+    color: #f80;
+}
