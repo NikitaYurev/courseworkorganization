@@ -161,7 +161,7 @@ createReviewsTable($conn);
                 <ul class="navbar-nav ml-auto">
                     <?php if(isset($_SESSION['user_id'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Logged in as <?= htmlspecialchars($_SESSION['username']) ?></a>
+                            <a class="nav-link" href="profile.php">Logged in as <?= htmlspecialchars($_SESSION['username']) ?></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="logout.php">Logout</a>
@@ -171,7 +171,7 @@ createReviewsTable($conn);
                             <a class="nav-link" href="login.php">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/register.php' ? 'active' : '') ?>" href="register.php">Register</a>
+                            <a class="nav-link" href="register.php">Register</a>
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -182,7 +182,7 @@ createReviewsTable($conn);
     <section class="mt-4">
         <div class="container-fluid">
             <div class="collapsible">
-                <button id="prev"><img src="./img/previous.png" alt="previous"></button>
+                <button id="prev"><img src="./img/index/previous.png" alt="previous"></button>
                 <div class="content">
                     <div class="text-container slide active">
                         <div class="row">
@@ -253,7 +253,7 @@ createReviewsTable($conn);
                         </form>
                     </div>
                 </div>
-                <button id="next"><img src="./img/next.png" alt="next"></button>
+                <button id="next"><img src="./img/index/next.png" alt="next"></button>
             </div>
         </div>
     </section>
