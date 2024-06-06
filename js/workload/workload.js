@@ -1,33 +1,33 @@
 $(document).ready(function() {
+    // Load chat for a project
     $('.project-item').click(function() {
         var projectId = $(this).data('project-id');
-
-        // Highlight the selected project
         $('.project-item').removeClass('selected');
         $(this).addClass('selected');
 
-        // Fetch and display chat for the selected project
         $.ajax({
             url: 'fetch_chat.php',
-            method: 'GET',
+            method: 'POST',
             data: { project_id: projectId },
-            success: function(response) {
-                $('#chat-section .chat-box').html(response);
-            },
-            error: function(xhr, status, error) {
-                console.error("Error fetching chat:", error);
+            success: function(data) {
+                $('.chat-box').html(data);
             }
         });
     });
 
+    // Load chat for a coworker
     $('.worker-item').click(function() {
         var coworkerId = $(this).data('coworker-id');
-
-        // Highlight the selected coworker
         $('.worker-item').removeClass('selected');
         $(this).addClass('selected');
 
-        // Fetch and display chat with the selected coworker (you can modify this part as needed)
-        // Example: $.ajax({ url: 'fetch_coworker_chat.php', method: 'GET', data: { coworker_id: coworkerId }, ... });
+        $.ajax({
+            url: 'fetch_chat.php',
+            method: 'POST',
+            data: { coworker_id: coworkerId },
+            success: function(data) {
+                $('.chat-box').html(data);
+            }
+        });
     });
 });

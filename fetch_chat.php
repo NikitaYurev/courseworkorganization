@@ -9,20 +9,19 @@ if (isset($_GET['project_id'])) {
                    JOIN users ON chats.user_id = users.id 
                    WHERE chats.project_id = ? 
                    ORDER BY chats.created_at ASC";
-    $chat_stmt = $conn->prepare($chat_query);
-    $chat_stmt->bind_param('i', $project_id);
-    $chat_stmt->execute();
-    $chat_result = $chat_stmt->get_result();
-    $chats = $chat_result->fetch_all(MYSQLI_ASSOC);
+    $stmt = $conn->prepare($chat_query);
+    $stmt->bind_param('i', $project_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    foreach ($chats as $chat) {
-        echo "<div class='chat-message'>";
-        echo "<strong>" . htmlspecialchars($chat['username']) . ":</strong> ";
-        echo "<span>" . htmlspecialchars($chat['message']) . "</span>";
-        echo "<small class='text-muted'>" . $chat['created_at'] . "</small>";
-        echo "</div>";
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo '<p><strong>' . htmlspecialchars($row['username']) . ':</strong> ' . htmlspecialchars($row['message']) . ' <em>(' . $row['created_at'] . ')</em></p>';
+        }
+    } else {
+        echo '<p>No chats found for this project.</p>';
     }
 } else {
-    echo "Invalid request.";
+    echo '<p>Invalid project ID.</p>';
 }
 ?>

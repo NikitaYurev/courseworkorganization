@@ -33,16 +33,10 @@ $projects_stmt->execute();
 $projects_result = $projects_stmt->get_result();
 $projects = $projects_result->fetch_all(MYSQLI_ASSOC);
 
-// Fetch coworkers for the projects
-$coworkers_query = "SELECT users.id, users.username, project_coworkers.project_id 
-                    FROM users 
-                    JOIN project_coworkers ON users.id = project_coworkers.coworker_id
-                    WHERE project_coworkers.project_id IN (SELECT id FROM projects WHERE team_leader_id = ?)";
-$coworkers_stmt = $conn->prepare($coworkers_query);
-$coworkers_stmt->bind_param('i', $user_id);
-$coworkers_stmt->execute();
-$coworkers_result = $coworkers_stmt->get_result();
-$coworkers = $coworkers_result->fetch_all(MYSQLI_ASSOC);
+// Fetch all coworkers, admins, and owners
+$users_query = "SELECT id, username FROM users WHERE role IN ('coworker', 'admin', 'owner')";
+$users_result = $conn->query($users_query);
+$users = $users_result->fetch_all(MYSQLI_ASSOC);
 
 ?>
 
@@ -121,8 +115,8 @@ $coworkers = $coworkers_result->fetch_all(MYSQLI_ASSOC);
             </div>
             <div class="col-md-3" id="workers-list">
                 <!-- List of workers to write to (coworkers list with chats) -->
-                <?php foreach ($coworkers as $coworker): ?>
-                    <div class="worker-item" data-coworker-id="<?= $coworker['id'] ?>"><?= htmlspecialchars($coworker['username']) ?></div>
+                <?php foreach ($users as $user): ?>
+                    <div class="worker-item" data-coworker-id="<?= $user['id'] ?>"><?= htmlspecialchars($user['username']) ?></div>
                 <?php endforeach; ?>
             </div>
         </div>
