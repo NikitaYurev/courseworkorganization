@@ -1,0 +1,84 @@
+/* accept_project.css */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevent scrolling on the entire page */
+}
+
+.container-fluid {
+    height: calc(100vh - 56px); /* Adjust height to exclude the navbar */
+    overflow: hidden; /* Prevent scrolling in the container */
+    display: flex;
+    flex-direction: column;
+}
+
+#accept-project-container {
+    flex-grow: 1;
+    display: flex;
+}
+
+#project-list, #project-details {
+    padding: 0;
+    height: calc(100vh - 56px - 56px); /* Adjust height to exclude the navbar and message bar */
+    overflow-y: auto; /* Add a scrollbar if content overflows */
+    display: flex;
+    flex-direction: column;
+}
+
+.project-item {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 5px 15px; /* Add margin to avoid sticking to the container edges */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+}
+
+.project-item:hover {
+    background-color: #f0f0f0;
+}
+
+.project-item.selected {
+    background-color: #d4edda;
+}
+
+.project-item img {
+    margin-right: 10px;
+}
+
+.project-details {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    margin: 5px 15px;
+    padding: 15px;
+    overflow-y: auto;
+    border-radius: 5px;
+}
+
+.btn-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-success, .btn-danger {
+    width: 48%;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border: none;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+}
+
+.btn-success:hover, .btn-danger:hover {
+    opacity: 0.8;
+}

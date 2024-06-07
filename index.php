@@ -28,8 +28,6 @@ function recordVisit($conn, $user_id) {
     $stmt->execute();
 }
 
-
-
 // Function to record a visit from a guest (no user ID)
 function recordGuestVisit($conn) {
     $insert_visit_query = "INSERT INTO visit_log (visit_time) VALUES (CURRENT_TIMESTAMP)";
@@ -138,7 +136,7 @@ createReviewsTable($conn);
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">Menu</a>
+            <a class="navbar-brand" href="index.php">Menu</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -153,17 +151,17 @@ createReviewsTable($conn);
                     <li class="nav-item">
                         <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/contact.php' ? 'active' : '') ?>" href="contact.php">Contact</a>
                     </li>
-                    <?php if (isset($_SESSION['user_id']) && isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
+                    <?php if(isset($_SESSION['user_id']) && $_SESSION['role'] == 'admin'): ?>
                         <li class="nav-item">
                             <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/administration_page.php' ? 'active' : '') ?>" href="administration_page.php">Administration</a>
                         </li>
                     <?php endif; ?>
-                    <?php if (in_array($_SESSION['role'], ['coworker', 'owner', 'admin', 'team_leader'])): ?>
+                    <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['coworker', 'owner', 'admin', 'team_leader'])): ?>
                         <li class="nav-item">
                             <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/workload.php' ? 'active' : '') ?>" href="workload.php">Workload</a>
                         </li>
                     <?php endif; ?>
-                    <?php if (isset($_SESSION['user_id']) && isset($_SESSION['role']) && $_SESSION['role'] == 'team_leader'): ?>
+                    <?php if (isset($_SESSION['user_id']) && $_SESSION['role'] == 'team_leader'): ?>
                         <li class="nav-item">
                             <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/accept_project.php' ? 'active' : '') ?>" href="accept_project.php">Accept Projects</a>
                         </li>
@@ -182,7 +180,7 @@ createReviewsTable($conn);
                             <a class="nav-link" href="login.php">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="register.php">Register</a>
+                            <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/register.php' ? 'active' : '') ?>" href="register.php">Register</a>
                         </li>
                     <?php endif; ?>
                 </ul>
@@ -193,7 +191,8 @@ createReviewsTable($conn);
     <section class="mt-4">
         <div class="container-fluid">
             <div class="collapsible">
-                <button id="prev"><img src="./img/index/previous.png" alt="previous"></button>
+                <button id```php
+                    "prev"><img src="./img/index/previous.png" alt="previous"></button>
                 <div class="content">
                     <div class="text-container slide active">
                         <div class="row">
