@@ -33,7 +33,18 @@ $projects_stmt->execute();
 $projects_result = $projects_stmt->get_result();
 $projects = $projects_result->fetch_all(MYSQLI_ASSOC);
 
-// Fetch all coworkers, admins, and owners excluding the current user
+// Fetch coworkers for the projects
+$coworkers_query = "SELECT users.id, users.username, project_coworkers.project_id 
+                    FROM users 
+                    JOIN project_coworkers ON users.id = project_coworkers.coworker_id
+                    WHERE project_coworkers.project_id IN (SELECT id FROM projects WHERE team_leader_id = ?)";
+$coworkers_stmt = $conn->prepare($coworkers_query);
+$coworkers_stmt->bind_param('i', $user_id);
+$coworkers_stmt->execute();
+$coworkers_result = $coworkers_stmt->get_result();
+$coworkers = $coworkers_result->fetch_all(MYSQLI_ASSOC);
+
+// Fetch coworkers, admins, and owners
 $users_query = "SELECT id, username FROM users WHERE role IN ('coworker', 'admin', 'owner') AND id != ?";
 $users_stmt = $conn->prepare($users_query);
 $users_stmt->bind_param('i', $user_id);
@@ -41,6 +52,13 @@ $users_stmt->execute();
 $users_result = $users_stmt->get_result();
 $users = $users_result->fetch_all(MYSQLI_ASSOC);
 
+// Fetch projects
+$projects_query = "SELECT id, name FROM projects";
+$projects_result = $conn->query($projects_query);
+$projects = [];
+while ($row = $projects_result->fetch_assoc()) {
+    $projects[] = $row;
+}
 ?>
 
 <!DOCTYPE html>
@@ -55,7 +73,7 @@ $users = $users_result->fetch_all(MYSQLI_ASSOC);
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">Menu</a>
+            <a class="navbar-brand" href="index.php">Menu</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -110,10 +128,14 @@ $users = $users_result->fetch_all(MYSQLI_ASSOC);
                     <div class="project-item" data-project-id="<?= $project['id'] ?>"><?= htmlspecialchars($project['name']) ?></div>
                 <?php endforeach; ?>
             </div>
-            <div class="col-md-6" id="chat-section">
+            <div class="col-md-6 d-flex flex-column" id="chat-section">
                 <!-- Chat section (initially empty) -->
-                <div class="chat-box">
+                <div class="chat-box flex-grow-1">
                     <p>Select a project to view the chat.</p>
+                </div>
+                <div id="message-input-container">
+                    <textarea id="message-input" rows="1" placeholder="Type your message..."></textarea>
+                    <button id="send-message-btn">Send</button>
                 </div>
             </div>
             <div class="col-md-3" id="workers-list">
@@ -131,3 +153,4 @@ $users = $users_result->fetch_all(MYSQLI_ASSOC);
     <script src="./js/workload/workload.js"></script>
 </body>
 </html>
+
