@@ -53,7 +53,7 @@ $(document).ready(function() {
     $('.project-item').click(function() {
         selectedProjectId = $(this).data('project-id');
         selectedCoworkerId = null;
-        $('.project-item').removeClass('selected');
+        $('.project-item, .worker-item').removeClass('selected');
         $(this).addClass('selected');
         fetchProjectMessages(selectedProjectId);
     });
@@ -61,7 +61,7 @@ $(document).ready(function() {
     $('.worker-item').click(function() {
         selectedCoworkerId = $(this).data('coworker-id');
         selectedProjectId = null;
-        $('.worker-item').removeClass('selected');
+        $('.project-item, .worker-item').removeClass('selected');
         $(this).addClass('selected');
         fetchCoworkerMessages(selectedCoworkerId);
     });
