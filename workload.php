@@ -20,7 +20,8 @@ if (!$user) {
     exit;
 }
 
-if (!in_array($user['role'], ['coworker', 'owner', 'admin'])) {
+// Allow access to team_leader role
+if (!in_array($user['role'], ['coworker', 'owner', 'admin', 'team_leader'])) {
     echo "Access denied.";
     exit;
 }
@@ -45,7 +46,7 @@ $coworkers_result = $coworkers_stmt->get_result();
 $coworkers = $coworkers_result->fetch_all(MYSQLI_ASSOC);
 
 // Fetch coworkers, admins, and owners
-$users_query = "SELECT id, username FROM users WHERE role IN ('coworker', 'admin', 'owner') AND id != ?";
+$users_query = "SELECT id, username FROM users WHERE role IN ('coworker', 'admin', 'owner', 'team_leader') AND id != ?";
 $users_stmt = $conn->prepare($users_query);
 $users_stmt->bind_param('i', $user_id);
 $users_stmt->execute();
@@ -158,4 +159,3 @@ while ($row = $projects_result->fetch_assoc()) {
     <script src="./js/workload/workload.js"></script>
 </body>
 </html>
-

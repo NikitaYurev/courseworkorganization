@@ -5,19 +5,22 @@ header('Content-Type: application/json');
 include 'db_connect.php';
 
 $user_id = $_SESSION['user_id'];
-$role = $_SESSION['role'];
 
 if (isset($_POST['project_id'])) {
     $project_id = $_POST['project_id'];
 
-    // Validate project ID
-    $project_query = "SELECT id FROM projects WHERE id = ?";
+    // Validate project ID for the current user
+    $project_query = "SELECT projects.id 
+                      FROM projects 
+                      JOIN project_coworkers ON projects.id = project_coworkers.project_id
+                      WHERE projects.id = ? AND project_coworkers.coworker_id = ?
+                      OR projects.team_leader_id = ?";
     $stmt = $conn->prepare($project_query);
     if ($stmt === false) {
         echo json_encode(['success' => false, 'error' => 'Project query preparation failed: ' . $conn->error]);
         exit;
     }
-    $stmt->bind_param('i', $project_id);
+    $stmt->bind_param('iii', $project_id, $user_id, $user_id);
     $stmt->execute();
     $project_result = $stmt->get_result();
 
@@ -78,4 +81,3 @@ if (isset($_POST['project_id'])) {
 }
 
 $conn->close();
-?>
