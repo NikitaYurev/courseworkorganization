@@ -11,3 +11,15 @@
 .search-button {
     background-color:#ffffff;
 }
+
+/* Add this to the existing CSS file */
+.user-list-container {
+    height: 400px; /* Adjust the height as necessary */
+    overflow-y: auto;
+}
+
+.table {
+    width: 100%;
+    table-layout: fixed;
+    word-wrap: break-word;
+}

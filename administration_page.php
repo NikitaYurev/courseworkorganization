@@ -107,7 +107,7 @@ if ($result === false) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                     <?php 
+                                    <?php 
                                         // Output user data while escaping HTML characters
                                         if ($result !== false && $result->num_rows > 0) {
                                             while($row = $result->fetch_assoc()) {
@@ -163,8 +163,3 @@ if ($result === false) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
 </body>
 </html>
-
-<?php
-// Close connection at the end of the file
-$conn->close();
-?>
