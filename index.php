@@ -191,8 +191,7 @@ createReviewsTable($conn);
     <section class="mt-4">
         <div class="container-fluid">
             <div class="collapsible">
-                <button id```php
-                    "prev"><img src="./img/index/previous.png" alt="previous"></button>
+                <button id="prev"><img src="./img/index/previous.png" alt="previous"></button>
                 <div class="content">
                     <div class="text-container slide active">
                         <div class="row">
