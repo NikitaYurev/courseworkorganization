@@ -1,7 +1,6 @@
 $(document).ready(function() {
     var selectedProjectId = null;
     var selectedCoworkerId = null;
-    var reloadInterval = null;
 
     function fetchProjectMessages(projectId) {
         $.ajax({
@@ -51,22 +50,12 @@ $(document).ready(function() {
         });
     }
 
-    function autoReloadMessages() {
-        if (selectedProjectId) {
-            fetchProjectMessages(selectedProjectId);
-        } else if (selectedCoworkerId) {
-            fetchCoworkerMessages(selectedCoworkerId);
-        }
-    }
-
     $('.project-item').click(function() {
         selectedProjectId = $(this).data('project-id');
         selectedCoworkerId = null;
         $('.project-item, .worker-item').removeClass('selected');
         $(this).addClass('selected');
         fetchProjectMessages(selectedProjectId);
-        clearInterval(reloadInterval);
-        reloadInterval = setInterval(autoReloadMessages, 5000);
     });
 
     $('.worker-item').click(function() {
@@ -75,8 +64,6 @@ $(document).ready(function() {
         $('.project-item, .worker-item').removeClass('selected');
         $(this).addClass('selected');
         fetchCoworkerMessages(selectedCoworkerId);
-        clearInterval(reloadInterval);
-        reloadInterval = setInterval(autoReloadMessages, 5000);
     });
 
     $('#send-message-btn').click(function() {
@@ -121,4 +108,12 @@ $(document).ready(function() {
             }
         });
     });
+
+    setInterval(function() {
+        if (selectedProjectId) {
+            fetchProjectMessages(selectedProjectId);
+        } else if (selectedCoworkerId) {
+            fetchCoworkerMessages(selectedCoworkerId);
+        }
+    }, 5000); // Fetch new messages every 5 seconds
 });

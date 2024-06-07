@@ -9,26 +9,19 @@ $user_id = $_SESSION['user_id'];
 if (isset($_POST['project_id'])) {
     $project_id = $_POST['project_id'];
 
-    // Validate project ID for the current user
-    $project_query = "SELECT projects.id 
-                      FROM projects 
-                      JOIN project_coworkers ON projects.id = project_coworkers.project_id
-                      WHERE projects.id = ? AND project_coworkers.coworker_id = ?
-                      OR projects.team_leader_id = ?";
+    // Validate project ID
+    $project_query = "SELECT * FROM projects WHERE id = ? AND team_leader_id = ?";
     $stmt = $conn->prepare($project_query);
     if ($stmt === false) {
         echo json_encode(['success' => false, 'error' => 'Project query preparation failed: ' . $conn->error]);
         exit;
     }
-    $stmt->bind_param('iii', $project_id, $user_id, $user_id);
+    $stmt->bind_param('ii', $project_id, $user_id);
     $stmt->execute();
     $project_result = $stmt->get_result();
 
     if ($project_result->num_rows > 0) {
-        $chat_query = "SELECT chats.message, chats.created_at, users.username 
-                       FROM chats 
-                       JOIN users ON chats.user_id = users.id 
-                       WHERE chats.project_id = ?";
+        $chat_query = "SELECT chats.message, chats.created_at, users.username FROM chats JOIN users ON chats.user_id = users.id WHERE chats.project_id = ?";
         $stmt = $conn->prepare($chat_query);
         if ($stmt === false) {
             echo json_encode(['success' => false, 'error' => 'Chat query preparation failed: ' . $conn->error]);
@@ -56,9 +49,10 @@ if (isset($_POST['project_id'])) {
     }
 
     // Fetch chat messages between the current user and the selected coworker
-    $chat_query = "SELECT coworker_chats.message, coworker_chats.created_at, users.username 
+    $chat_query = "SELECT coworker_chats.message, coworker_chats.created_at, sender.username as sender_username, receiver.username as receiver_username 
                    FROM coworker_chats 
-                   JOIN users ON coworker_chats.sender_id = users.id OR coworker_chats.receiver_id = users.id 
+                   JOIN users AS sender ON coworker_chats.sender_id = sender.id 
+                   JOIN users AS receiver ON coworker_chats.receiver_id = receiver.id 
                    WHERE (coworker_chats.sender_id = ? AND coworker_chats.receiver_id = ?) 
                    OR (coworker_chats.sender_id = ? AND coworker_chats.receiver_id = ?)";
     $stmt = $conn->prepare($chat_query);
@@ -72,6 +66,7 @@ if (isset($_POST['project_id'])) {
 
     $messages = [];
     while ($row = $chat_result->fetch_assoc()) {
+        $row['username'] = ($row['sender_username'] == $_SESSION['username']) ? 'You' : $row['receiver_username'];
         $messages[] = $row;
     }
 
@@ -81,3 +76,4 @@ if (isset($_POST['project_id'])) {
 }
 
 $conn->close();
+?>
