@@ -153,14 +153,19 @@ createReviewsTable($conn);
                     <li class="nav-item">
                         <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/contact.php' ? 'active' : '') ?>" href="contact.php">Contact</a>
                     </li>
-                    <?php if(isset($_SESSION['user_id']) && $_SESSION['role'] == 'admin'): ?>
+                    <?php if (isset($_SESSION['user_id']) && isset($_SESSION['role']) && $_SESSION['role'] == 'admin'): ?>
                         <li class="nav-item">
                             <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/administration_page.php' ? 'active' : '') ?>" href="administration_page.php">Administration</a>
                         </li>
                     <?php endif; ?>
-                    <?php if (in_array($_SESSION['role'], ['coworker', 'owner', 'admin'])): ?>
+                    <?php if (in_array($_SESSION['role'], ['coworker', 'owner', 'admin', 'team_leader'])): ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="workload.php">Workload</a>
+                            <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/workload.php' ? 'active' : '') ?>" href="workload.php">Workload</a>
+                        </li>
+                    <?php endif; ?>
+                    <?php if (isset($_SESSION['user_id']) && isset($_SESSION['role']) && $_SESSION['role'] == 'team_leader'): ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/accept_project.php' ? 'active' : '') ?>" href="accept_project.php">Accept Projects</a>
                         </li>
                     <?php endif; ?>
                 </ul>
