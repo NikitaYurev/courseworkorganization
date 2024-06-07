@@ -34,7 +34,7 @@ $stmt->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accept Projects</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="./styles/accept_project/accept_project.css">
 </head>
 <body>
@@ -94,9 +94,9 @@ $stmt->close();
 
     <section class="mt-4">
         <div class="container-fluid">
-            <div class="row" id="accept-project-container">
+            <div class="row">
                 <!-- Left side -->
-                <div class="col-md-6" id="project-list">
+                <div class="col-md-6">
                     <div class="rounded-box p-3">
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" id="search-input" placeholder="Search projects by name or email" aria-label="Search" aria-describedby="button-addon2">
@@ -126,7 +126,7 @@ $stmt->close();
                                         // Output project request data while escaping HTML characters
                                         if ($result !== false && $result->num_rows > 0) {
                                             while($row = $result->fetch_assoc()) {
-                                                echo "<tr data-project-id='" . htmlspecialchars($row["id"]) . "'>";
+                                                echo "<tr data-project-id='" . htmlspecialchars($row["id"]) . "' style=\"cursor: pointer;\"'>";
                                                 echo "<td>" . htmlspecialchars($row["task_description"]) . "</td>";
                                                 echo "<td>" . htmlspecialchars($row["email"]) . "</td>";
                                                 echo "</tr>";
@@ -143,7 +143,7 @@ $stmt->close();
                     </div>
                 </div>
                 <!-- Right side -->
-                <div class="col-md-6" id="project-details">
+                <div class="col-md-6">
                     <div class="rounded-box p-3">
                         <div class="form-group">
                             <label for="project-name">Project Name</label>
@@ -163,23 +163,38 @@ $stmt->close();
         </div>
     </section>
 
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
 <script>
-$(document).ready(function() {
-    $('.project-list-container tr').click(function() {
-        $('.project-list-container tr').removeClass('selected');
-        $(this).addClass('selected');
-        var projectName = $(this).find('td:eq(0)').text();
-        var projectEmail = $(this).find('td:eq(1)').text();
-        $('#project-name').val(projectName);
-        $('#project-email').val(projectEmail);
-        $('#accept-button').data('project-id', $(this).data('project-id'));
-        $('#deny-button').data('project-id', $(this).data('project-id'));
+document.addEventListener("DOMContentLoaded", function() {
+    // Get all table rows
+    let rows = document.querySelectorAll("tbody tr");
+
+    // Add event listeners to each row
+    rows.forEach(function(row) {
+        row.addEventListener("mouseenter", function() {
+            this.style.backgroundColor = "#f0f0f0"; // Change background color on hover
+        });
+
+        row.addEventListener("mouseleave", function() {
+            this.style.backgroundColor = ""; // Revert to default background color when mouse leaves
+        });
+
+        row.addEventListener("click", function() {
+            const projectId = this.getAttribute('data-project-id');
+            const projectName = this.children[0].textContent;
+            const projectEmail = this.children[1].textContent;
+
+            document.getElementById('project-name').value = projectName;
+            document.getElementById('project-email').value = projectEmail;
+
+            document.getElementById('accept-button').dataset.projectId = projectId;
+            document.getElementById('deny-button').dataset.projectId = projectId;
+        });
     });
 
-    $('#accept-button').click(function() {
-        var projectId = $(this).data('project-id');
+    document.getElementById('accept-button').addEventListener('click', function() {
+        const projectId = this.dataset.projectId;
         if (projectId) {
             $.post('accept_project_action.php', { id: projectId, action: 'accept' }, function(response) {
                 alert(response.message);
@@ -192,8 +207,8 @@ $(document).ready(function() {
         }
     });
 
-    $('#deny-button').click(function() {
-        var projectId = $(this).data('project-id');
+    document.getElementById('deny-button').addEventListener('click', function() {
+        const projectId = this.dataset.projectId;
         if (projectId) {
             $.post('accept_project_action.php', { id: projectId, action: 'deny' }, function(response) {
                 alert(response.message);
@@ -216,3 +231,4 @@ if ($conn) {
     $conn->close();
 }
 ?>
+

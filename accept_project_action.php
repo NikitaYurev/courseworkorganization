@@ -32,8 +32,8 @@ if (isset($_POST['id']) && isset($_POST['action'])) {
 
     if ($action === 'accept') {
         // Move the request to the projects table
-        $move_query = "INSERT INTO projects (user_id, name, last_name, email, phone_number, zip_code, address, technical_task, task_description, date, message_method)
-                       SELECT user_id, name, last_name, email, phone_number, zip_code, address, technical_task, task_description, date, message_method
+        $move_query = "INSERT INTO projects (user_id, name, last_name, email, phone, zip, address, file, task_description, date, message_type)
+                       SELECT user_id, name, last_name, email, phone, zip, address, file, task_description, date, message_type
                        FROM project_requests WHERE id = ?";
         $stmt = $conn->prepare($move_query);
 

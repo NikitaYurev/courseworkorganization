@@ -38,6 +38,7 @@ html, body {
 
 .project-item:hover {
     background-color: #f0f0f0;
+    cursor: pointer; /* Add pointer cursor on hover */
 }
 
 .project-item.selected {
