@@ -1,79 +1,66 @@
 <?php
 session_start();
-header('Content-Type: application/json');
-
 include 'db_connect.php';
 
-$user_id = $_SESSION['user_id'];
+header('Content-Type: application/json');
 
-if (isset($_POST['project_id'])) {
-    $project_id = $_POST['project_id'];
-
-    // Validate project ID
-    $project_query = "SELECT * FROM projects WHERE id = ? AND team_leader_id = ?";
-    $stmt = $conn->prepare($project_query);
-    if ($stmt === false) {
-        echo json_encode(['success' => false, 'error' => 'Project query preparation failed: ' . $conn->error]);
-        exit;
-    }
-    $stmt->bind_param('ii', $project_id, $user_id);
-    $stmt->execute();
-    $project_result = $stmt->get_result();
-
-    if ($project_result->num_rows > 0) {
-        $chat_query = "SELECT chats.message, chats.created_at, users.username FROM chats JOIN users ON chats.user_id = users.id WHERE chats.project_id = ?";
-        $stmt = $conn->prepare($chat_query);
-        if ($stmt === false) {
-            echo json_encode(['success' => false, 'error' => 'Chat query preparation failed: ' . $conn->error]);
-            exit;
-        }
-        $stmt->bind_param('i', $project_id);
-        $stmt->execute();
-        $chat_result = $stmt->get_result();
-
-        $messages = [];
-        while ($row = $chat_result->fetch_assoc()) {
-            $messages[] = $row;
-        }
-
-        echo json_encode(['success' => true, 'messages' => $messages]);
-    } else {
-        echo json_encode(['success' => false, 'error' => 'Invalid project ID.']);
-    }
-} elseif (isset($_POST['coworker_id'])) {
-    $coworker_id = $_POST['coworker_id'];
-
-    if ($coworker_id == $user_id) {
-        echo json_encode(['success' => false, 'error' => 'You cannot chat with yourself.']);
-        exit;
-    }
-
-    // Fetch chat messages between the current user and the selected coworker
-    $chat_query = "SELECT coworker_chats.message, coworker_chats.created_at, sender.username as sender_username, receiver.username as receiver_username 
-                   FROM coworker_chats 
-                   JOIN users AS sender ON coworker_chats.sender_id = sender.id 
-                   JOIN users AS receiver ON coworker_chats.receiver_id = receiver.id 
-                   WHERE (coworker_chats.sender_id = ? AND coworker_chats.receiver_id = ?) 
-                   OR (coworker_chats.sender_id = ? AND coworker_chats.receiver_id = ?)";
-    $stmt = $conn->prepare($chat_query);
-    if ($stmt === false) {
-        echo json_encode(['success' => false, 'error' => 'Coworker chat query preparation failed: ' . $conn->error]);
-        exit;
-    }
-    $stmt->bind_param('iiii', $user_id, $coworker_id, $coworker_id, $user_id);
-    $stmt->execute();
-    $chat_result = $stmt->get_result();
-
-    $messages = [];
-    while ($row = $chat_result->fetch_assoc()) {
-        $row['username'] = ($row['sender_username'] == $_SESSION['username']) ? 'You' : $row['receiver_username'];
-        $messages[] = $row;
-    }
-
-    echo json_encode(['success' => true, 'messages' => $messages]);
-} else {
-    echo json_encode(['success' => false, 'error' => 'Invalid request.']);
+function send_json_response($success, $data = null, $message = '') {
+    echo json_encode(['success' => $success, 'data' => $data, 'message' => $message]);
+    exit;
 }
 
-$conn->close();
+if (!isset($_SESSION['user_id'])) {
+    send_json_response(false, null, 'User not authenticated.');
+}
+
+$user_id = $_SESSION['user_id'];
+$project_id = isset($_POST['project_id']) ? intval($_POST['project_id']) : null;
+$coworker_id = isset($_POST['coworker_id']) ? intval($_POST['coworker_id']) : null;
+
+if ($project_id) {
+    $access_query = "SELECT * FROM projects 
+                     LEFT JOIN project_coworkers ON projects.id = project_coworkers.project_id 
+                     WHERE (projects.team_leader_id = ? OR project_coworkers.coworker_id = ?) AND projects.id = ?";
+    $access_stmt = $conn->prepare($access_query);
+    $access_stmt->bind_param('iii', $user_id, $user_id, $project_id);
+    $access_stmt->execute();
+    $access_result = $access_stmt->get_result();
+    if ($access_result->num_rows === 0) {
+        send_json_response(false, null, 'Invalid project ID.');
+    }
+
+    $messages_query = "SELECT chats.*, users.username FROM chats 
+                       JOIN users ON chats.user_id = users.id 
+                       WHERE chats.project_id = ? ORDER BY chats.created_at ASC";
+    $messages_stmt = $conn->prepare($messages_query);
+    if ($messages_stmt === false) {
+        send_json_response(false, null, 'Failed to prepare statement: ' . $conn->error);
+    }
+    $messages_stmt->bind_param('i', $project_id);
+    $messages_stmt->execute();
+    $messages_result = $messages_stmt->get_result();
+    $messages = $messages_result->fetch_all(MYSQLI_ASSOC);
+
+    send_json_response(true, $messages);
+}
+
+if ($coworker_id) {
+    $messages_query = "SELECT private_chats.*, users.username FROM private_chats 
+                       JOIN users ON private_chats.sender_id = users.id 
+                       WHERE (private_chats.sender_id = ? AND private_chats.receiver_id = ?) 
+                       OR (private_chats.sender_id = ? AND private_chats.receiver_id = ?) 
+                       ORDER BY private_chats.created_at ASC";
+    $messages_stmt = $conn->prepare($messages_query);
+    if ($messages_stmt === false) {
+        send_json_response(false, null, 'Failed to prepare statement: ' . $conn->error);
+    }
+    $messages_stmt->bind_param('iiii', $user_id, $coworker_id, $coworker_id, $user_id);
+    $messages_stmt->execute();
+    $messages_result = $messages_stmt->get_result();
+    $messages = $messages_result->fetch_all(MYSQLI_ASSOC);
+
+    send_json_response(true, $messages);
+}
+
+send_json_response(false, null, 'Invalid parameters.');
 ?>

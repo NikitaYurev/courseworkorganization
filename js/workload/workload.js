@@ -10,9 +10,9 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
-                    displayMessages(response.messages);
+                    displayMessages(response.data);
                 } else {
-                    $('.chat-box').html('<p>' + response.error + '</p>');
+                    $('.chat-box').html('<p>' + response.message + '</p>');
                 }
             },
             error: function(xhr, status, error) {
@@ -29,9 +29,9 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if (response.success) {
-                    displayMessages(response.messages);
+                    displayMessages(response.data);
                 } else {
-                    $('.chat-box').html('<p>' + response.error + '</p>');
+                    $('.chat-box').html('<p>' + response.message + '</p>');
                 }
             },
             error: function(xhr, status, error) {
@@ -43,11 +43,15 @@ $(document).ready(function() {
     function displayMessages(messages) {
         var chatBox = $('.chat-box');
         chatBox.empty();
-        messages.forEach(function(message) {
-            var messageElement = $('<div class="chat-message"></div>');
-            messageElement.html('<strong>' + message.username + ':</strong> ' + message.message + '<br><small>' + message.created_at + '</small>');
-            chatBox.append(messageElement);
-        });
+        if (messages.length === 0) {
+            chatBox.html('<p>No messages yet.</p>');
+        } else {
+            messages.forEach(function(message) {
+                var messageElement = $('<div class="chat-message"></div>');
+                messageElement.html('<strong>' + message.username + ':</strong> ' + message.message + '<br><small>' + message.created_at + '</small>');
+                chatBox.append(messageElement);
+            });
+        }
     }
 
     $('.project-item').click(function() {
@@ -100,7 +104,7 @@ $(document).ready(function() {
                     }
                     $('#message-input').val('');
                 } else {
-                    alert(response.error || 'Failed to send message.');
+                    alert(response.message || 'Failed to send message.');
                 }
             },
             error: function(xhr, status, error) {
