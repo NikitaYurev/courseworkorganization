@@ -1,0 +1,66 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+.gradient-btn {
+    background: linear-gradient(45deg, #ff6b6b, #f8e71c);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    text-decoration: none; /* Remove underline */
+    display: inline-block;
+}
+
+.gradient-btn:hover {
+    background: linear-gradient(45deg, #f8e71c, #ff6b6b);
+    color: white; /* Ensure the text stays white on hover */
+    text-decoration: none; /* Ensure no underline on hover */
+}
+
+.input-file-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+}
+
+.input-file {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.input-file-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.input-file-label:hover {
+    background-color: #0056b3;
+}
+
+.input-file-container input[type="file"] {
+    display: none;
+}

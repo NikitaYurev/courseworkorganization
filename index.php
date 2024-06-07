@@ -130,6 +130,7 @@ createReviewsTable($conn);
     <link rel="stylesheet" href="./styles/index/programming-text.css">
     <link rel="stylesheet" href="./styles/index/modal.css">
     <link rel="stylesheet" href="./styles/index/satisfied-users.css">
+    <link rel="stylesheet" href="./styles/index/request-button.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <title>Landing Page</title>
@@ -262,6 +263,11 @@ createReviewsTable($conn);
             </div>
         </div>
     </section>
+
+    <section class="text-center mt-4">
+        <a href="project_request.php" class="gradient-btn">Request a Project</a>
+    </section>
+
 
 
     <!-- Custom Message Modal -->
