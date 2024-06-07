@@ -7,12 +7,16 @@ $(document).ready(function() {
             url: 'fetch_chat.php',
             type: 'POST',
             data: { project_id: projectId },
+            dataType: 'json',
             success: function(response) {
                 if (response.success) {
                     displayMessages(response.messages);
                 } else {
                     $('.chat-box').html('<p>' + response.error + '</p>');
                 }
+            },
+            error: function(xhr, status, error) {
+                $('.chat-box').html('<p>Error fetching chat messages: ' + error + '</p>');
             }
         });
     }
@@ -22,12 +26,16 @@ $(document).ready(function() {
             url: 'fetch_chat.php',
             type: 'POST',
             data: { coworker_id: coworkerId },
+            dataType: 'json',
             success: function(response) {
                 if (response.success) {
                     displayMessages(response.messages);
                 } else {
                     $('.chat-box').html('<p>' + response.error + '</p>');
                 }
+            },
+            error: function(xhr, status, error) {
+                $('.chat-box').html('<p>Error fetching chat messages: ' + error + '</p>');
             }
         });
     }
@@ -82,6 +90,7 @@ $(document).ready(function() {
             url: 'send_message.php',
             type: 'POST',
             data: data,
+            dataType: 'json',
             success: function(response) {
                 if (response.success) {
                     if (selectedProjectId) {
@@ -91,8 +100,11 @@ $(document).ready(function() {
                     }
                     $('#message-input').val('');
                 } else {
-                    alert(response.message);
+                    alert(response.error || 'Failed to send message.');
                 }
+            },
+            error: function(xhr, status, error) {
+                alert('Error sending message: ' + error);
             }
         });
     });
