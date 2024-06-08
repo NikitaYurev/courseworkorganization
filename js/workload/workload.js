@@ -120,4 +120,15 @@ $(document).ready(function() {
             fetchCoworkerMessages(selectedCoworkerId);
         }
     }, 5000); // Fetch new messages every 5 seconds
+
+    $('#chat-management-btn').click(function() {
+        $('#projects-list').animate({
+            width: 'toggle'
+        }, 500, function() {
+            $('#projects-list').toggleClass('col-md-3 col-md-12');
+            $('#chat-section').toggleClass('col-md-6 col-md-12');
+            $('#workers-list').toggle();
+            $('#chat-management-btn').text($('#projects-list').is(':visible') ? 'Chat Management' : 'Return to Normal Mode');
+        });
+    });
 });

@@ -1,4 +1,5 @@
 <?php
+session_start(); // Ensure session is started at the beginning
 include 'db_connect.php';
 
 $message = '';
@@ -26,9 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare($insertQuery);
         $stmt->bind_param('ssss', $username, $email, $password, $role);
         if ($stmt->execute()) {
-            $_SESSION['message'] = "Registration successful!"; // Assuming session_start() has been called
+            // Automatically log in the user by setting session variables
+            $_SESSION['user_id'] = $stmt->insert_id;
+            $_SESSION['username'] = $username;
+            $_SESSION['role'] = $role;
+            $_SESSION['message'] = "Registration successful!";
             $_SESSION['message_type'] = 'success';
-            header('Location: index.php'); // Redirect to the home page or login page
+            header('Location: index.php'); // Redirect to the home page
             exit;
         } else {
             $message = "Registration failed!";
@@ -37,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $conn->close();
 }
-
 ?>
 
 <!DOCTYPE html>
