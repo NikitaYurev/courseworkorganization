@@ -19,6 +19,9 @@ if (!isset($_POST['id']) || !isset($_POST['action'])) {
 $project_id = $_POST['id'];
 $action = $_POST['action'];
 
+// Debugging output
+echo "Received project ID: $project_id, Action: $action<br>";
+
 $query = "SELECT role FROM users WHERE id = ?";
 $stmt = $conn->prepare($query);
 if ($stmt === false) {
@@ -36,7 +39,7 @@ if (!$user || $user['role'] !== 'team_leader') {
 
 if ($action === 'accept') {
     // First, manually fetch the data
-    $select_query = "SELECT task_description AS name, task_description AS description, user_id, created_at FROM project_requests WHERE id = ?";
+    $select_query = "SELECT name, task_description AS description, user_id AS team_leader_id, created_at FROM project_requests WHERE id = ?";
     $select_stmt = $conn->prepare($select_query);
     if ($select_stmt === false) {
         die('Failed to prepare select statement: ' . $conn->error . '<br>Query: ' . $select_query);
@@ -53,7 +56,7 @@ if ($action === 'accept') {
         if ($insert_stmt === false) {
             die('Failed to prepare insert statement: ' . $conn->error . '<br>Query: ' . $insert_query);
         }
-        $insert_stmt->bind_param('ssis', $project_data['name'], $project_data['description'], $project_data['user_id'], $project_data['created_at']);
+        $insert_stmt->bind_param('ssis', $project_data['name'], $project_data['description'], $project_data['team_leader_id'], $project_data['created_at']);
         if ($insert_stmt->execute()) {
             $delete_query = "DELETE FROM project_requests WHERE id = ?";
             $delete_stmt = $conn->prepare($delete_query);

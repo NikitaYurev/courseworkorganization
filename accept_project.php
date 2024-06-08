@@ -8,6 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
+
 $query = "SELECT role FROM users WHERE id = ?";
 $stmt = $conn->prepare($query);
 
@@ -177,6 +178,7 @@ $stmt->close();
                             <input type="email" class="form-control" id="project-email" readonly>
                         </div>
                         <div class="btn-group">
+                            <input type="hidden" id="selected-project-id">
                             <button type="button" class="btn btn-success" id="accept-button">Accept</button>
                             <button type="button" class="btn btn-danger" id="deny-button">Deny</button>
                         </div>
@@ -186,7 +188,7 @@ $stmt->close();
         </div>
     </section>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJzcn1pHsvOs+PO5h6QxMa0M6T5l5vE5DC5zaDCKdlnWsi" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-wfWgfWbAMBTe2E4pIbKXQWck0zWnU7Tc9N8G9wP/9XofUh8CJt5k3HXIJL2Pf/p2" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -209,40 +211,64 @@ $stmt->close();
                 selectedProjectId = this.getAttribute('data-project-id');
                 const projectName = this.children[0].textContent;
                 const projectEmail = this.children[1].textContent;
+                const projectId = this.getAttribute('data-project-id');
 
                 document.getElementById('project-name').value = projectName;
                 document.getElementById('project-email').value = projectEmail;
 
                 document.getElementById('accept-button').dataset.projectId = selectedProjectId;
                 document.getElementById('deny-button').dataset.projectId = selectedProjectId;
+                document.getElementById('selected-project-id').value = projectId;
             });
         });
 
         document.getElementById('accept-button').addEventListener('click', function() {
-            if (selectedProjectId) {
-                $.post('accept_project_action.php', { id: selectedProjectId, action: 'accept' }, function(response) {
-                    alert(response.message);
-                    if (response.success) {
+                const projectId = document.getElementById('selected-project-id').value;
+                if (projectId) {
+                    fetch('accept_project_action.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `id=${projectId}&action=accept`
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
                         location.reload();
-                    }
-                }, 'json');
-            } else {
-                alert('Please select a project to accept.');
-            }
-        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error processing request.');
+                    });
+                } else {
+                    alert('Please select a project first.');
+                }
+            });
 
         document.getElementById('deny-button').addEventListener('click', function() {
-            if (selectedProjectId) {
-                $.post('accept_project_action.php', { id: selectedProjectId, action: 'deny' }, function(response) {
-                    alert(response.message);
-                    if (response.success) {
+                const projectId = document.getElementById('selected-project-id').value;
+                if (projectId) {
+                    fetch('accept_project_action.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `id=${projectId}&action=deny`
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
                         location.reload();
-                    }
-                }, 'json');
-            } else {
-                alert('Please select a project to deny.');
-            }
-        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error processing request.');
+                    });
+                } else {
+                    alert('Please select a project first.');
+                }
+            });
     });
     </script>
 </body>
