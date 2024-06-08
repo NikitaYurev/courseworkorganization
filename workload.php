@@ -10,6 +10,9 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 $query = "SELECT role FROM users WHERE id = ?";
 $stmt = $conn->prepare($query);
+if ($stmt === false) {
+    die('Failed to prepare statement: ' . $conn->error);
+}
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -27,8 +30,11 @@ if (!in_array($user['role'], ['coworker', 'owner', 'admin', 'team_leader'])) {
 }
 
 // Fetch projects assigned to the user
-$projects_query = "SELECT * FROM projects WHERE team_leader_id = ?";
+$projects_query = "SELECT id, name FROM projects WHERE team_leader_id = ?";
 $projects_stmt = $conn->prepare($projects_query);
+if ($projects_stmt === false) {
+    die('Failed to prepare statement (projects_query): ' . $conn->error);
+}
 $projects_stmt->bind_param('i', $user_id);
 $projects_stmt->execute();
 $projects_result = $projects_stmt->get_result();
@@ -40,6 +46,9 @@ $coworkers_query = "SELECT users.id, users.username, project_coworkers.project_i
                     JOIN project_coworkers ON users.id = project_coworkers.coworker_id
                     WHERE project_coworkers.project_id IN (SELECT id FROM projects WHERE team_leader_id = ?)";
 $coworkers_stmt = $conn->prepare($coworkers_query);
+if ($coworkers_stmt === false) {
+    die('Failed to prepare statement (coworkers_query): ' . $conn->error);
+}
 $coworkers_stmt->bind_param('i', $user_id);
 $coworkers_stmt->execute();
 $coworkers_result = $coworkers_stmt->get_result();
@@ -48,6 +57,9 @@ $coworkers = $coworkers_result->fetch_all(MYSQLI_ASSOC);
 // Fetch coworkers, admins, and owners
 $users_query = "SELECT id, username FROM users WHERE role IN ('coworker', 'admin', 'owner', 'team_leader') AND id != ?";
 $users_stmt = $conn->prepare($users_query);
+if ($users_stmt === false) {
+    die('Failed to prepare statement (users_query): ' . $conn->error);
+}
 $users_stmt->bind_param('i', $user_id);
 $users_stmt->execute();
 $users_result = $users_stmt->get_result();
@@ -118,7 +130,7 @@ while ($row = $projects_result->fetch_assoc()) {
                             <a class="nav-link" href="login.php">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="register.php">Register</a>
+                            <a class="nav-link <?= ($_SERVER['PHP_SELF'] == '/register.php' ? 'active' : '') ?>" href="register.php">Register</a>
                         </li>
                     <?php endif; ?>
                 </ul>

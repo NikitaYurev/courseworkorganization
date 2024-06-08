@@ -55,28 +55,22 @@ if ($action === 'accept') {
         }
         $insert_stmt->bind_param('ssis', $project_data['name'], $project_data['description'], $project_data['team_leader_id'], $project_data['created_at']);
         if ($insert_stmt->execute()) {
+            // Get the ID of the newly inserted project
             $new_project_id = $insert_stmt->insert_id;
 
-            // Fetch all coworkers' IDs
-            $coworkers_query = "SELECT id FROM users WHERE role = 'coworker'";
-            $coworkers_result = $conn->query($coworkers_query);
-            if ($coworkers_result === false) {
-                die('Failed to fetch coworkers: ' . $conn->error);
+            // Assign all coworkers to the new project
+            $coworker_ids = [1, 2, 3, 4, 5, 6, 10];
+            $assign_query = "INSERT INTO project_coworkers (project_id, coworker_id) VALUES ";
+            $assign_values = [];
+            foreach ($coworker_ids as $coworker_id) {
+                $assign_values[] = "($new_project_id, $coworker_id)";
             }
-            
-            // Insert records into project_coworkers for each coworker
-            $insert_coworkers_query = "INSERT INTO project_coworkers (project_id, coworker_id) VALUES (?, ?)";
-            $insert_coworkers_stmt = $conn->prepare($insert_coworkers_query);
-            if ($insert_coworkers_stmt === false) {
-                die('Failed to prepare insert statement for project_coworkers: ' . $conn->error);
+            $assign_query .= implode(', ', $assign_values);
+
+            if ($conn->query($assign_query) === false) {
+                die('Failed to assign coworkers: ' . $conn->error . '<br>Query: ' . $assign_query);
             }
 
-            while ($coworker = $coworkers_result->fetch_assoc()) {
-                $insert_coworkers_stmt->bind_param('ii', $new_project_id, $coworker['id']);
-                $insert_coworkers_stmt->execute();
-            }
-
-            // Delete the project request
             $delete_query = "DELETE FROM project_requests WHERE id = ?";
             $delete_stmt = $conn->prepare($delete_query);
             if ($delete_stmt === false) {
@@ -84,7 +78,6 @@ if ($action === 'accept') {
             }
             $delete_stmt->bind_param('i', $project_id);
             $delete_stmt->execute();
-
             echo json_encode(['success' => true, 'message' => 'Project accepted successfully']);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to accept project: ' . $insert_stmt->error]);
