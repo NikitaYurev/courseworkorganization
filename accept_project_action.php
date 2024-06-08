@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 include 'db_connect.php';
 
@@ -8,14 +10,20 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$query = "SELECT role FROM users WHERE id = ?";
-$stmt = $conn->prepare($query);
 
-if ($stmt === false) {
-    echo json_encode(['success' => false, 'message' => 'Failed to prepare statement: ' . $conn->error]);
+if (!isset($_POST['id']) || !isset($_POST['action'])) {
+    echo json_encode(['success' => false, 'message' => 'Invalid parameters']);
     exit;
 }
 
+$project_id = $_POST['id'];
+$action = $_POST['action'];
+
+$query = "SELECT role FROM users WHERE id = ?";
+$stmt = $conn->prepare($query);
+if ($stmt === false) {
+    die('Failed to prepare statement (SELECT role): ' . $conn->error);
+}
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -26,67 +34,57 @@ if (!$user || $user['role'] !== 'team_leader') {
     exit;
 }
 
-if (isset($_POST['id']) && isset($_POST['action'])) {
-    $request_id = $_POST['id'];
-    $action = $_POST['action'];
-
-    if ($action === 'accept') {
-        // Move the request to the projects table
-        $move_query = "INSERT INTO projects (user_id, name, last_name, email, phone, zip, address, file, task_description, date, message_type)
-                       SELECT user_id, name, last_name, email, phone, zip, address, file, task_description, date, message_type
-                       FROM project_requests WHERE id = ?";
-        $stmt = $conn->prepare($move_query);
-
-        if ($stmt === false) {
-            echo json_encode(['success' => false, 'message' => 'Failed to prepare statement: ' . $conn->error]);
-            exit;
+if ($action === 'accept') {
+    // First, manually fetch the data
+    $select_query = "SELECT task_description AS name, task_description AS description, user_id, created_at FROM project_requests WHERE id = ?";
+    $select_stmt = $conn->prepare($select_query);
+    if ($select_stmt === false) {
+        die('Failed to prepare select statement: ' . $conn->error . '<br>Query: ' . $select_query);
+    }
+    $select_stmt->bind_param('i', $project_id);
+    $select_stmt->execute();
+    $select_result = $select_stmt->get_result();
+    $project_data = $select_result->fetch_assoc();
+    
+    if ($project_data) {
+        // Then, insert the fetched data
+        $insert_query = "INSERT INTO projects (name, description, team_leader_id, created_at, accepted) VALUES (?, ?, ?, ?, 0)";
+        $insert_stmt = $conn->prepare($insert_query);
+        if ($insert_stmt === false) {
+            die('Failed to prepare insert statement: ' . $conn->error . '<br>Query: ' . $insert_query);
         }
-
-        $stmt->bind_param('i', $request_id);
-        if ($stmt->execute()) {
-            // Delete the request from project_requests table
+        $insert_stmt->bind_param('ssis', $project_data['name'], $project_data['description'], $project_data['user_id'], $project_data['created_at']);
+        if ($insert_stmt->execute()) {
             $delete_query = "DELETE FROM project_requests WHERE id = ?";
-            $stmt = $conn->prepare($delete_query);
-
-            if ($stmt === false) {
-                echo json_encode(['success' => false, 'message' => 'Failed to prepare statement: ' . $conn->error]);
-                exit;
+            $delete_stmt = $conn->prepare($delete_query);
+            if ($delete_stmt === false) {
+                die('Failed to prepare delete statement: ' . $conn->error . '<br>Query: ' . $delete_query);
             }
-
-            $stmt->bind_param('i', $request_id);
-            if ($stmt->execute()) {
-                echo json_encode(['success' => true, 'message' => 'Project accepted successfully']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Failed to delete project request']);
-            }
+            $delete_stmt->bind_param('i', $project_id);
+            $delete_stmt->execute();
+            echo json_encode(['success' => true, 'message' => 'Project accepted successfully']);
         } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to move project request']);
-        }
-    } elseif ($action === 'deny') {
-        // Delete the request from project_requests table
-        $delete_query = "DELETE FROM project_requests WHERE id = ?";
-        $stmt = $conn->prepare($delete_query);
-
-        if ($stmt === false) {
-            echo json_encode(['success' => false, 'message' => 'Failed to prepare statement: ' . $conn->error]);
-            exit;
-        }
-
-        $stmt->bind_param('i', $request_id);
-        if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Project denied successfully']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to delete project request']);
+            echo json_encode(['success' => false, 'message' => 'Failed to accept project: ' . $insert_stmt->error]);
         }
     } else {
-        echo json_encode(['success' => false, 'message' => 'Invalid action']);
+        echo json_encode(['success' => false, 'message' => 'No data found for the specified project ID']);
+    }
+} elseif ($action === 'deny') {
+    $query = "DELETE FROM project_requests WHERE id = ?";
+    $stmt = $conn->prepare($query);
+    if ($stmt === false) {
+        die('Failed to prepare delete statement: ' . $conn->error . '<br>Query: ' . $query);
+    }
+    $stmt->bind_param('i', $project_id);
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Project denied successfully']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to deny project: ' . $stmt->error]);
     }
 } else {
-    echo json_encode(['success' => false, 'message' => 'Invalid project ID or action']);
+    echo json_encode(['success' => false, 'message' => 'Invalid action']);
 }
 
-// Check if $conn is available before attempting to close it
-if ($conn) {
-    $conn->close();
-}
+$stmt->close();
+$conn->close();
 ?>

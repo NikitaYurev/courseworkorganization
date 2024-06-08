@@ -36,6 +36,29 @@ $stmt->close();
     <title>Accept Projects</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="./styles/accept_project/accept_project.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .rounded-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-group {
+            margin-top: 20px;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f0f0f0;
+        }
+        .selected {
+            background-color: #e0e0e0 !important;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -163,65 +186,65 @@ $stmt->close();
         </div>
     </section>
 
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Get all table rows
-    let rows = document.querySelectorAll("tbody tr");
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJzcn1pHsvOs+PO5h6QxMa0M6T5l5vE5DC5zaDCKdlnWsi" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let selectedProjectId = null;
 
-    // Add event listeners to each row
-    rows.forEach(function(row) {
-        row.addEventListener("mouseenter", function() {
-            this.style.backgroundColor = "#f0f0f0"; // Change background color on hover
+        // Get all table rows
+        let rows = document.querySelectorAll("tbody tr");
+
+        // Add event listeners to each row
+        rows.forEach(function(row) {
+            row.addEventListener("mouseenter", function() {
+                this.style.backgroundColor = "#f0f0f0"; // Change background color on hover
+            });
+
+            row.addEventListener("mouseleave", function() {
+                this.style.backgroundColor = ""; // Revert to default background color when mouse leaves
+            });
+
+            row.addEventListener("click", function() {
+                selectedProjectId = this.getAttribute('data-project-id');
+                const projectName = this.children[0].textContent;
+                const projectEmail = this.children[1].textContent;
+
+                document.getElementById('project-name').value = projectName;
+                document.getElementById('project-email').value = projectEmail;
+
+                document.getElementById('accept-button').dataset.projectId = selectedProjectId;
+                document.getElementById('deny-button').dataset.projectId = selectedProjectId;
+            });
         });
 
-        row.addEventListener("mouseleave", function() {
-            this.style.backgroundColor = ""; // Revert to default background color when mouse leaves
+        document.getElementById('accept-button').addEventListener('click', function() {
+            if (selectedProjectId) {
+                $.post('accept_project_action.php', { id: selectedProjectId, action: 'accept' }, function(response) {
+                    alert(response.message);
+                    if (response.success) {
+                        location.reload();
+                    }
+                }, 'json');
+            } else {
+                alert('Please select a project to accept.');
+            }
         });
 
-        row.addEventListener("click", function() {
-            const projectId = this.getAttribute('data-project-id');
-            const projectName = this.children[0].textContent;
-            const projectEmail = this.children[1].textContent;
-
-            document.getElementById('project-name').value = projectName;
-            document.getElementById('project-email').value = projectEmail;
-
-            document.getElementById('accept-button').dataset.projectId = projectId;
-            document.getElementById('deny-button').dataset.projectId = projectId;
+        document.getElementById('deny-button').addEventListener('click', function() {
+            if (selectedProjectId) {
+                $.post('accept_project_action.php', { id: selectedProjectId, action: 'deny' }, function(response) {
+                    alert(response.message);
+                    if (response.success) {
+                        location.reload();
+                    }
+                }, 'json');
+            } else {
+                alert('Please select a project to deny.');
+            }
         });
     });
-
-    document.getElementById('accept-button').addEventListener('click', function() {
-        const projectId = this.dataset.projectId;
-        if (projectId) {
-            $.post('accept_project_action.php', { id: projectId, action: 'accept' }, function(response) {
-                alert(response.message);
-                if (response.success) {
-                    location.reload();
-                }
-            }, 'json');
-        } else {
-            alert('Please select a project to accept.');
-        }
-    });
-
-    document.getElementById('deny-button').addEventListener('click', function() {
-        const projectId = this.dataset.projectId;
-        if (projectId) {
-            $.post('accept_project_action.php', { id: projectId, action: 'deny' }, function(response) {
-                alert(response.message);
-                if (response.success) {
-                    location.reload();
-                }
-            }, 'json');
-        } else {
-            alert('Please select a project to deny.');
-        }
-    });
-});
-</script>
+    </script>
 </body>
 </html>
 
@@ -231,4 +254,3 @@ if ($conn) {
     $conn->close();
 }
 ?>
-

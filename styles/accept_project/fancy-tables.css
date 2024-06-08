@@ -1,0 +1,31 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    margin-bottom: 20px;
+}
+
+.rounded-box {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-group {
+    margin-top: 20px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f0f0f0;
+}
+
+.selected {
+    background-color: #e0e0e0 !important;
+}
+
+table th, table td {
+    text-align: left;
+    vertical-align: middle;
+}
